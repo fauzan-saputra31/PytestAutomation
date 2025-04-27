@@ -19,10 +19,17 @@ pipenv shell
 pipenv install
 ```
 
-to rune the script use pytest command:
+change API KEY and SECRET KEY in config.py:
+```
+API_KEY = 'API_KEY'
+SECRET_KEY = 'SECRET_KEY'
+```
+
+to run the script use pytest command:
 ```
 pytest spot_trading.py --html=report.html
 ```
+
 or if you want specific cas use pytest -k command:
 ```
 pytest spot_trading.py --html=report.html -k test_e2_market_order
