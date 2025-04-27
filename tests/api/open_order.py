@@ -5,7 +5,6 @@ from config import BASE_URI, API_KEY
 from tests.util import authentication
 
 
-# Account API class
 class OpenOrder:
     def __init__(self):
         self.base_url = BASE_URI
@@ -13,7 +12,6 @@ class OpenOrder:
         self.params = {'timestamp': int(time.time() * 1000)}
         self.endpoint = '/api/v3/openOrders'
 
-    # get account information with params timestamp and signature
     def get_open_orders(self):
         self.params['signature'] = authentication.create_signature(urlencode(self.params))
         return requests.get(self.base_url + self.endpoint, params=self.params, headers=self.headers)
