@@ -1,10 +1,7 @@
-import json
 import pytest
 import requests
-import websockets
 from assertpy.assertpy import assert_that
 from cerberus import Validator
-from config import WS_BASE_URI
 from tests.api.account import Account
 from tests.api.open_order import OpenOrder
 from tests.api.order import Order

@@ -1,6 +1,4 @@
 import time
-from typing import overload
-
 import requests
 from urllib.parse import urlencode
 from config import BASE_URI, API_KEY
