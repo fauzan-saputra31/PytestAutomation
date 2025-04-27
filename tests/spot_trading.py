@@ -3,11 +3,13 @@ import requests
 from assertpy.assertpy import assert_that
 from cerberus import Validator
 from tests.api.account import Account
+from tests.api.open_order import OpenOrder
 from tests.api.order import Order
 from tests.api.order_book import OrderBook
 from tests.util.file_reader import read_file
 
 account = Account()
+open_order = OpenOrder()
 order = Order()
 order_book = OrderBook()
 
@@ -43,11 +45,16 @@ def test_order_book(symbols):
     assert_that(Validator(order_book.get_order_book_schema()).validate(response.json())).is_true()
 
 
-def test_place_an_order(order_data):
-    response = order.place_order(order_data['symbol'], order_data['side'], order_data['type'],
+def test_place_a_limit_order(order_data):
+    response = order.place_limit_order(order_data['symbol'], order_data['side'], order_data['type'],
                                   order_data['timeInForce'], order_data['quantity'], order_data['price'])
-    print(response.request.url)
-    print(response.json())
     assert_that(response.status_code).is_equal_to(requests.codes.ok)
     assert_that(response.json()['orderId']).is_not_none()
     assert_that(Validator(order.get_order_schema()).validate(response.json())).is_true()
+
+def test_get_open_orders(order_data):
+    response = open_order.get_open_orders()
+    assert_that(response.status_code).is_equal_to(requests.codes.ok)
+    for resp in response.json():
+        assert_that(Validator(open_order.get_open_order_chema()).validate(resp)).is_true()
+
