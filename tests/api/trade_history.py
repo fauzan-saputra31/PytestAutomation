@@ -17,7 +17,7 @@ class TradeHistory:
         self.params['signature'] = authentication.create_signature(urlencode(self.params))
         return requests.get(self.base_url + self.endpoint, params=self.params, headers=self.headers)
 
-    def get_trade_history(self, symbol, order_id):
+    def get_trade_history_by_id(self, symbol, order_id):
         self.params['symbol'] = symbol
         self.params['orderId'] = order_id
         self.params['signature'] = authentication.create_signature(urlencode(self.params))

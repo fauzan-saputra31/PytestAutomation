@@ -14,7 +14,7 @@ class Order:
         self.params = {'timestamp': int(time.time() * 1000)}
         self.endpoint = '/api/v3/order'
 
-    def place_order(self, symbol, side, order_type, time_in_force, quantity, price):
+    def place_limit_order(self, symbol, side, order_type, time_in_force, quantity, price):
         self.params['symbol'] = symbol
         self.params['side'] = side
         self.params['type'] = order_type
@@ -24,7 +24,7 @@ class Order:
         self.params['signature'] = authentication.create_signature(urlencode(self.params))
         return requests.post(self.base_url + self.endpoint, params=self.params, headers=self.headers)
 
-    def place_order(self, symbol, side, quantity, order_type):
+    def place_market_order(self, symbol, side, quantity, order_type):
         self.params['symbol'] = symbol
         self.params['side'] = side
         self.params['type'] = order_type
