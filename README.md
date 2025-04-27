@@ -19,7 +19,7 @@ pipenv shell
 pipenv install
 ```
 
-change API KEY and SECRET KEY in config.py:
+change API KEY and SECRET KEY in config.py to the one you get from binance:
 ```
 API_KEY = 'API_KEY'
 SECRET_KEY = 'SECRET_KEY'
