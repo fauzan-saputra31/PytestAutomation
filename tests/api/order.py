@@ -1,4 +1,6 @@
 import time
+from typing import overload
+
 import requests
 from urllib.parse import urlencode
 from config import BASE_URI, API_KEY
@@ -12,13 +14,21 @@ class Order:
         self.params = {'timestamp': int(time.time() * 1000)}
         self.endpoint = '/api/v3/order'
 
-    def place_limit_order(self, symbol, side, order_type, time_in_force, quantity, price):
+    def place_order(self, symbol, side, order_type, time_in_force, quantity, price):
         self.params['symbol'] = symbol
         self.params['side'] = side
         self.params['type'] = order_type
         self.params['timeInForce'] = time_in_force
         self.params['quantity'] = quantity
         self.params['price'] = price
+        self.params['signature'] = authentication.create_signature(urlencode(self.params))
+        return requests.post(self.base_url + self.endpoint, params=self.params, headers=self.headers)
+
+    def place_order(self, symbol, side, quantity, order_type):
+        self.params['symbol'] = symbol
+        self.params['side'] = side
+        self.params['type'] = order_type
+        self.params['quantity'] = quantity
         self.params['signature'] = authentication.create_signature(urlencode(self.params))
         return requests.post(self.base_url + self.endpoint, params=self.params, headers=self.headers)
 

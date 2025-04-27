@@ -12,7 +12,14 @@ class TradeHistory:
         self.params = {'timestamp': int(time.time() * 1000)}
         self.endpoint = '/api/v3/myTrades'
 
-    def get_trade_history(self):
+    def get_trade_history(self, symbol):
+        self.params['symbol'] = symbol
+        self.params['signature'] = authentication.create_signature(urlencode(self.params))
+        return requests.get(self.base_url + self.endpoint, params=self.params, headers=self.headers)
+
+    def get_trade_history(self, symbol, order_id):
+        self.params['symbol'] = symbol
+        self.params['orderId'] = order_id
         self.params['signature'] = authentication.create_signature(urlencode(self.params))
         return requests.get(self.base_url + self.endpoint, params=self.params, headers=self.headers)
 

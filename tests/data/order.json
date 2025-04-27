@@ -4,5 +4,6 @@
   "type": "LIMIT",
   "timeInForce": "GTC",
   "quantity": 1.0,
-  "price": 400.0
+  "price": 400.0,
+  "asset": "BNB"
 }
