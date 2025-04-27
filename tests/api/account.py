@@ -11,6 +11,7 @@ class Account:
         self.headers = {'X-MBX-APIKEY': API_KEY}
         self.params = {'timestamp': int(time.time() * 1000)}
         self.endpoint = '/api/v3/account'
+        self.user_data_stream_endpoint = '/api/v3/userDataStream'
 
     # get account information with params timestamp and signature
     def get_account_information(self):
@@ -62,3 +63,6 @@ class Account:
             },
             'uid': {'type': 'integer', 'required': True}
         }
+
+    def get_user_data_listen_key(self):
+        return requests.post(self.base_url + self.user_data_stream_endpoint, headers=self.headers)

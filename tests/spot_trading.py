@@ -1,14 +1,17 @@
+import json
 import pytest
 import requests
+import websockets
 from assertpy.assertpy import assert_that
 from cerberus import Validator
+from config import WS_BASE_URI
 from tests.api.account import Account
 from tests.api.open_order import OpenOrder
 from tests.api.order import Order
 from tests.api.order_book import OrderBook
 from tests.api.trade_history import TradeHistory
 from tests.util.file_reader import read_file
-
+from tests.ws.ws import Ws
 
 # get test data from json file in the data folder
 @pytest.fixture
@@ -22,7 +25,7 @@ def order_data():
     data = read_file('order.json')
     yield data
 
-
+# ============================= rest api tests =============================
 # test user place a buy market order success and order is reflected in account balance and trade history
 def test_e2e_market_order(order_data):
     # get initial account balance
@@ -107,3 +110,34 @@ def test_fetch_trade_history(symbol_data):
     if response.json() is not None:
         for resp in response.json():
             assert_that(Validator(trade_history.get_trade_history_schema()).validate(resp)).is_true()
+
+# ============================= websocket tests =============================
+@pytest.mark.asyncio
+async def test_subscribe_order_book():
+    ws = Ws()
+    data = await ws.subscribe_order_book_stream('btcusdt')
+    assert_that(data['s']).is_equal_to('BTCUSDT')
+    assert_that(Validator(ws.get_ws_order_book_stream_schema()).validate(data)).is_true()
+
+@pytest.mark.asyncio
+async def test_subscribe_trade_stream():
+    ws = Ws()
+    data = await ws.subscribe_trade_stream('btcusdt')
+    assert_that(data['s']).is_equal_to('BTCUSDT')
+    assert_that(Validator(ws.get_ws_trade_stream_schema()).validate(data)).is_true()
+
+@pytest.mark.asyncio
+async def test_subscribe_user_data_stream():
+    account = Account()
+    listen_key = account.get_user_data_listen_key().json()['listenKey']
+    ws = Ws()
+    data = await ws.subscribe_user_data_stream(listen_key)
+    assert_that(data['e']).is_equal_to('executionReport')
+
+# @pytest.mark.asyncio
+# async def test_subscribe_order_book():
+#     async with websockets.connect(WS_BASE_URI + 'bnbusdt' + '@depth') as websocket:
+#         message = await websocket.recv()
+#         data = json.loads(message)
+#         print(data)
+#         assert_that(data['s']).is_equal_to('x')

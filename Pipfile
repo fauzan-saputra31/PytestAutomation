@@ -11,6 +11,8 @@ pytest = "*"
 assertpy = "*"
 pytest-html = "*"
 cerberus = "*"
+websockets = "*"
+pytest-asyncio = "*"
 
 [requires]
 python_version = "3.11"
