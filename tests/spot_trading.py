@@ -1,25 +1,53 @@
-import time
-from json import dumps
-from urllib.parse import urlencode
-from uuid import uuid4
-from assertpy.assertpy import assert_that
-from config import BASE_URI, API_KEY
-from tests.utils.file_reader import read_file
-from tests.utils.authentication import create_signature
-
-
+import pytest
 import requests
+from assertpy.assertpy import assert_that
+from cerberus import Validator
+from tests.api.account import Account
+from tests.api.order import Order
+from tests.api.order_book import OrderBook
+from tests.util.file_reader import read_file
+
+account = Account()
+order = Order()
+order_book = OrderBook()
 
 
+# get test data from json file in the data folder
+@pytest.fixture
+def symbols():
+    data = read_file('symbols.json')
+    yield data
+
+
+@pytest.fixture
+def order_data():
+    data = read_file('order.json')
+    yield data
+
+
+# test fetching the account balances account information
 def test_fetch_account_balance():
-    params = {
-        'timestamp': int(time.time() * 1000)
-    }
-    headers = {
-        'X-MBX-APIKEY': API_KEY,
-    }
-    params['signature'] = create_signature(urlencode(params))
-    response = requests.get(BASE_URI+'/api/v3/account', params=params, headers=headers)
+    # send request account information
+    response = account.get_account_information()
+    # assert http code success
     assert_that(response.status_code).is_equal_to(requests.codes.ok)
-    response_text = response.json()
-    print(response_text)
+    # assert account balance should not be none
+    assert_that(response.json()['balances']).is_not_none()
+    # assert response json schema
+    assert_that(Validator(account.get_account_schema()).validate(response.json())).is_true()
+
+
+def test_order_book(symbols):
+    response = order_book.get_order_book(symbols['symbol'])
+    assert_that(response.status_code).is_equal_to(requests.codes.ok)
+    assert_that(Validator(order_book.get_order_book_schema()).validate(response.json())).is_true()
+
+
+def test_place_an_order(order_data):
+    response = order.place_order(order_data['symbol'], order_data['side'], order_data['type'],
+                                  order_data['timeInForce'], order_data['quantity'], order_data['price'])
+    print(response.request.url)
+    print(response.json())
+    assert_that(response.status_code).is_equal_to(requests.codes.ok)
+    assert_that(response.json()['orderId']).is_not_none()
+    assert_that(Validator(order.get_order_schema()).validate(response.json())).is_true()

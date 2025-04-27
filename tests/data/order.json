@@ -1,0 +1,8 @@
+{
+  "symbol": "BNBUSDT",
+  "side": "BUY",
+  "type": "LIMIT",
+  "timeInForce": "GTC",
+  "quantity": 1.0,
+  "price": 400.0
+}

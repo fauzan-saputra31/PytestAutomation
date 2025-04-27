@@ -9,6 +9,8 @@ verify_ssl = true
 requests = "*"
 pytest = "*"
 assertpy = "*"
+pytest-html = "*"
+cerberus = "*"
 
 [requires]
 python_version = "3.11"
